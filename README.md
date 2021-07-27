@@ -8,6 +8,29 @@ Other than the two image files, the source files are copyright Luca Filipozzi un
 
 The two image files are copyright NLnet Labs under a BSD 3-clause license.
 
+Please note that this solution relies on two utility functions that I have added to hammerspoon's top-level `init.lua`:
+
+```lua
+function os.capture(cmd, raw)
+  local f = assert(io.popen(cmd, 'r'))
+  local s = assert(f:read('*a'))
+  f:close()
+  if raw then return s end
+  s = string.gsub(s, '^%s+', '')
+  s = string.gsub(s, '%s+$', '')
+  s = string.gsub(s, '[\n\r]+', ' ')
+  return s
+end
+```
+
+and
+
+```lua
+function table.hasKey(tbl, key)
+  return tbl ~= nil and tbl[key] ~= nil
+end
+```
+
 [1]: https://github.com/NLnetLabs/dnssec-trigger
 [2]: https://github.com/Hammerspoon/hammerspoon
 [3]: https://www.macports.org/

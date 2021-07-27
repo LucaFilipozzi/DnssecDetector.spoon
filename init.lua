@@ -6,6 +6,8 @@ obj.__index = obj
 obj.name = "DnssecDetector"
 obj.version = "1.0"
 obj.author = "Luca Filipozzi"
+obj.license = "BSD-3-Clause - https://opensource.org/licenses/BSD-3-Clause"
+obj.homepage = "https://github.com/LucaFilipozzi/DnssecDetector.spoon"
 
 function obj:init()
   self.spoonDirectory = hs.fs.currentDir() .. "/Spoons/DnssecDetector.spoon/"
