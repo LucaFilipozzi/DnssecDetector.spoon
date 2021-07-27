@@ -109,10 +109,13 @@ function obj:networkReachabilityCallback(_, flags)
   -- action the selected dnsResolverMode
   self.logger.d("networkReachabilityCallback - setting resolver mode to "..dnsResolverMode.." and flushing cache")
   if dnsResolverMode == "Secure" then
+    self.logger.d("networkReachabilityCallback - use local unbound")
     os.execute("/usr/sbin/networksetup -setdnsservers "..userDefinedName.." 127.0.0.1")
   elseif dnsResolverMode == "Insecure" then
+    self.logger.d("networkReachabilityCallback - use DHCP-provided dns servers")
     os.execute("/usr/sbin/networksetup -setdnsservers "..userDefinedName.." empty")
   elseif dnsResolverMode == "Broken" or dnsResolverMode == nil then
+    self.logger.d("networkReachabilityCallback - prevent all lookups")
     os.execute("/usr/sbin/networksetup -setdnsservers "..userDefinedName.." 127.0.0.127")
   end
   os.execute("/usr/bin/dscacheutil -flushcache")
