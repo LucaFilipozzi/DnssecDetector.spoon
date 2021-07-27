@@ -31,6 +31,19 @@ function table.hasKey(tbl, key)
 end
 ```
 
+Finally, to enable myself to trigger a _reprobe_, I add a hotkey bindng to hammerspoon's top-level `init.lua` after loading the spoon:
+
+```lua
+hs.loadSpoon("DnssecDetector")
+spoon.DnssecDetector:start()
+local callback = hs.fnutils.partial(
+  spoon.DnssecDetector.networkReachabilityCallback,
+  spoon.DnssecDetector,
+  nil,
+  hs.network.reachability.internet():status())
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, "W", callback)
+```
+
 [1]: https://github.com/NLnetLabs/dnssec-trigger
 [2]: https://github.com/Hammerspoon/hammerspoon
 [3]: https://www.macports.org/
