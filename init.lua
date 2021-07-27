@@ -10,7 +10,6 @@ obj.license = "BSD-3-Clause - https://opensource.org/licenses/BSD-3-Clause"
 obj.homepage = "https://github.com/LucaFilipozzi/DnssecDetector.spoon"
 
 function obj:init()
-  self.spoonDirectory = hs.fs.currentDir() .. "/Spoons/DnssecDetector.spoon/"
   self.networkConfiguration = hs.network.configuration.open()
   self.networkReachability = hs.network.reachability.internet()
   self.logger = hs.logger.new(obj.name)
@@ -67,7 +66,7 @@ function obj:networkReachabilityCallback(_, flags)
 
   -- detect tls-over-dns availability
   if dnsResolverMode == nil then
-    local detectDnsOverTlsCommand = self.spoonDirectory.."detect-dns-over-tls"
+    local detectDnsOverTlsCommand = hs.spoons.resourcePath("detect-dns-over-tls")
     local detectDnsOverTlsResult = os.capture(detectDnsOverTlsCommand)
     if dnsResolverMode == nil and detectDnsOverTlsResult == "ERR" then
       self.logger.d("networkReachabilityCallbakck - detect-dns-over-tls broke")
@@ -85,7 +84,7 @@ function obj:networkReachabilityCallback(_, flags)
 
   -- detect captive portal existence
   if dnsResolverMode == nil then
-    local detectCaptivePortalCommand = self.spoonDirectory.."detect-captive-portal ".. table.concat(serverAddresses, ",")
+    local detectCaptivePortalCommand = hs.spoons.resourcePath("detect-captive-portal").." "..table.concat(serverAddresses, ",")
     local detectCaptivePortalResult = os.capture(detectCaptivePortalCommand)
     if dnsResolverMode == nil and detectCaptivePortalResult == "ERR" then
       self.logger.d("networkReachabilityCallbakck - detect-captive-portal broke")
@@ -125,12 +124,12 @@ end
 
 function obj:networkConfigurationCallback(_, keys)
   self.logger.d("networkConfigurationCallback")
-  local imageFile = self.spoonDirectory .. "nak.png"
+  local imageFile = hs.spoons.resourcePath("nak.png")
   local primaryService = self:getValue("State:/Network/Global/IPv4", "PrimaryService")
   if primaryService ~= nil then
     local serverAddresses = self:getValue("Setup:/Network/Service/"..primaryService.."/DNS", "ServerAddresses")
     if serverAddresses ~= nil and #serverAddresses == 1 and serverAddresses[1] == "127.0.0.1" then
-      imageFile = self.spoonDirectory .. "ack.png"
+      imageFile = hs.spoons.resourcePath("ack.png")
     end
   end
   self.menubarItem:setIcon(imageFile, false)
