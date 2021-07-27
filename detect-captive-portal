@@ -1,0 +1,33 @@
+#!/opt/local/bin/bash
+# Copyright (C) 2021 Luca Filipozzi
+
+curlCmd="/opt/local/bin/curl"
+kdigCmd="/opt/local/bin/kdig"
+
+dnsServer=$1
+targetAddr="185.49.140.10"
+targetHost="ster.nlnetlabs.nl"
+
+valueExpected=${targetAddr}
+valueReceived=$(${kdigCmd} -4 @${dnsServer} +short ${targetHost} A 2>/dev/null)
+if test $? -ne 0 ; then
+  echo "ERR" # kdig failed
+  exit 1
+fi
+if test "x${valueReceived}" != "x${valueExpected}" ; then
+  echo "ERR" # kdig produced invalid result
+  exit 2
+fi
+
+valueExpected="OK"
+valueReceived=$(${curlCmd} --fail --silent --resolve $targetHost:80:$targetAddr http://${targetHost}/hotspot.txt)
+if test $? -ne 0 ; then
+  echo "ERR" # curl failed
+  exit 3
+fi
+if test "x${valueReceived}" == "x${valueExpected}" ; then
+  echo "NAK" # portal not detected
+else
+  echo "ACK" # portal detected
+fi
+exit 0
