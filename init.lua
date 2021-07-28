@@ -1,4 +1,11 @@
 ---- === DnssecDetector === ----
+---
+--- Receive notifications every time internet becomes (un)reachable,
+--- updating configured domain name servers based on whether DoT
+--- (DNS-over-TLS) is available or not.
+---
+--- Download: https://github.com/LucaFilipozzi/DnssecDetector.spoon
+
 -- Copyright (C) 2021 Luca Filipozzi
 
 local obj = {}
@@ -9,12 +16,21 @@ obj.author = "Luca Filipozzi"
 obj.license = "BSD-3-Clause - https://opensource.org/licenses/BSD-3-Clause"
 obj.homepage = "https://github.com/LucaFilipozzi/DnssecDetector.spoon"
 
+--- DnssecDetector:init()
+--- Method
+--- Initialize the DnssecDetector spoon
 function obj:init()
   self.networkConfiguration = hs.network.configuration.open()
   self.networkReachability = hs.network.reachability.internet()
   self.logger = hs.logger.new(obj.name)
 end
 
+--- DnssecDetector:start()
+--- Method
+--- Starts the DnssecDetector spoon
+---
+--- Returns:
+--- * The DnssecDetector object
 function obj:start()
   self.menubarItem = hs.menubar.new()
 
@@ -32,12 +48,25 @@ function obj:start()
   return self
 end
 
+--- DnssecDetector:stop()
+--- Method
+--- Stops the DnssecDetector spoon
 function obj:stop()
   self.menubarItem:delete()
   self.networkConfiguration:stop()
   self.reachabilityConfiguration:stop()
 end
 
+--- DnssecDetector:getValue()
+--- Method
+--- Returns the network configuration value for given key and subkey
+---
+--- Parameters:
+--- * key - the key specifing the content to retrieve from the store
+--- * subkey - specifies the subkey to retrieve from within the content
+---
+--- Returns:
+--- * the network configuration value
 function obj:getValue(key, subkey)
   local content = self.networkConfiguration:contents(key)[key]
   if table.hasKey(content, subkey) then
@@ -47,6 +76,13 @@ function obj:getValue(key, subkey)
   end
 end
 
+--- DnssecDetector:networkReachabilityCallback()
+--- Method
+--- Fires whenever the internet is ()un)reachable and modified DNS name servers
+---
+--- Parameters:
+--- * _ - ignored
+--- * flags - the flags indicating (un)reachabiilty of the internet
 function obj:networkReachabilityCallback(_, flags)
   self.logger.d("networkReachabilityCallback")
 
@@ -125,6 +161,13 @@ function obj:networkReachabilityCallback(_, flags)
     :send()
 end
 
+--- DnssecDetector:networkConfigurationCallback()
+--- Method
+--- Fires whenever the DNS servers change and updates the menubar icon
+---
+--- Parameters:
+--- * _ - ignored
+--- * keys - the enumeration of keys that changed
 function obj:networkConfigurationCallback(_, keys)
   self.logger.d("networkConfigurationCallback")
   local imageFile = hs.spoons.resourcePath("nak.png")
