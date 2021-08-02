@@ -11,8 +11,8 @@ under a BSD 3-clause license.
 
 The two image files are copyright NLnet Labs under a BSD 3-clause license.
 
-Please note that this solution relies on two utility functions that I have
-added to hammerspoon's top-level `init.lua`:
+Please note that this solution relies on two utility functions added to
+`~/.hammerspoon/init.lua`:
 
 ```lua
 function os.capture(cmd, raw)
@@ -35,8 +35,8 @@ function table.hasKey(tbl, key)
 end
 ```
 
-Finally, to enable myself to trigger a _reprobe_, I add a hotkey bindng to
-hammerspoon's top-level `init.lua` after loading the spoon:
+Triggering a _reprobe_ is possible via a hotkey binding added to
+`~/.hammerspoon/init.lua`:
 
 ```lua
 hs.loadSpoon("DnssecDetector")
